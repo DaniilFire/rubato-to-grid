@@ -20,8 +20,6 @@ Tested on a 172-second solo piano piece (786 notes extracted from Suno audio via
 
 ## How It Works
 
-`rubato_to_grid_v3.py` uses a beat-aware pipeline:
-
 1. **IOI histogram** — finds the real beat period from inter-onset intervals, weighted by note velocity and register
 2. **Strong beat detection** — selects structurally important notes (top 35% by weight, min gap = 0.75× beat period) to anchor the tempo map
 3. **Viterbi DP** — finds the optimal sequence of beat intervals (1–8 beats per segment) with a smoothness penalty
@@ -40,34 +38,44 @@ scipy is optional — the script falls back to pure-Python Gaussian smoothing if
 
 ## Usage
 
+No parameters required — BPM and meter are auto-detected:
+
 ```
-python rubato_to_grid_v3.py 1.mid
+python rubato_to_grid_v3.py input.mid
 ```
 
-Output: `1_grid.mid` — a 2-track MIDI (Right Hand / Left Hand split at C4) with the full tempo map embedded.
+Output: `input_grid.mid` with the full tempo map embedded.
+
+### Options
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `--subdiv N` | 16 | Grid resolution: 4, 8, 12, 16, 32 (16th notes default) |
+| `--smooth SIGMA` | 2.0 | Gaussian BPM smoothing in beats |
+| `--meter N/D` | auto | Force time signature, e.g. `3/4` |
+| `--min-bpm BPM` | 50 | Minimum BPM for beat detection |
+| `--max-bpm BPM` | 220 | Maximum BPM for beat detection |
+| `--verbose` | off | Print step-by-step details |
+
+### Examples
+
+```
+python rubato_to_grid_v3.py piece.mid
+python rubato_to_grid_v3.py piece.mid out.mid --subdiv 8
+python rubato_to_grid_v3.py piece.mid out.mid --meter 3/4 --smooth 1.5
+python rubato_to_grid_v3.py piece.mid out.mid --min-bpm 80 --max-bpm 160 --verbose
+```
 
 ### Import into FL Studio
 
-Drag `1_grid.mid` into FL Studio. When prompted, enable **"Import tempo changes"** / **"Use tempo map"** so the variable BPM is preserved.
+Drag the output `.mid` into FL Studio. When prompted, enable **"Import tempo changes"** / **"Use tempo map"** so the variable BPM is preserved.
 
 ## Files
 
 | File | Description |
 |------|-------------|
 | `rubato_to_grid_v3.py` | Main script — beat-aware Viterbi converter |
-| `rubato_to_grid_auto.py` | v2 — brute-force parameter search (requires `--bpm`) |
 | `midi_polish.py` | Optional post-processing — 8th-note visual cleanup for piano roll |
-
-## v2 vs v3
-
-| | v2 (`rubato_to_grid_auto.py`) | v3 (`rubato_to_grid_v3.py`) |
-|---|---|---|
-| BPM required | Yes (`--bpm 120`) | No — auto-detected |
-| Approach | ~72 candidate grids, pick best | Beat detection + Viterbi DP |
-| Output | 3 variants (balanced / readable / accurate) | Single best result |
-| Speed | Slower | Fast |
-
-v2 is still useful if you want to explore multiple grid interpretations of an ambiguous recording.
 
 ## Requirements
 
