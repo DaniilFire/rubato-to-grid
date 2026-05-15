@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python midi_split_voices.py example.mid)",
+      "Bash(python midi_split_voices.py example.mid --method range)",
+      "Bash(python midi_split_voices.py example.mid --method percentile)"
+    ]
+  }
+}

@@ -10,7 +10,9 @@
       "Bash(ls \"c:\\\\Users\\\\user\\\\Desktop\\\\ABRACADABRA\\\\rubato_to_grid_auto_fl_tool\\\\\" 2>&1)",
       "Read(//c/Users/user/Desktop/ABRACADABRA/**)",
       "Bash(python midi_polish.py 1_grid.mid)",
-      "Bash(python midi_harmonize.py 1_grid_polished.mid)"
+      "Bash(python midi_harmonize.py 1_grid_polished.mid)",
+      "Bash(python midi_split_voices.py 1_grid_arranged.mid)",
+      "Bash(python midi_split_voices.py 1_grid.mid)"
     ],
     "additionalDirectories": [
       "c:\\Users\\user\\.claude\\projects\\c--Users-user-Desktop-ABRACADABRA-rubato-to-grid-auto-fl-tool\\memory"
